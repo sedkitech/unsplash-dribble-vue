@@ -61,7 +61,11 @@
             >&times;</span
           >
           <div style="border-radius: 5px">
-            <h2>Author: {{ pressedPhoto?.user?.username }}</h2>
+ <!-- with unsplash API -->
+            <!-- <h2>Author: {{ pressedPhoto?.user?.username }}</h2> -->
+            <h2>Author: {{ pressedPhoto?.username }}</h2>
+
+
             <i
               v-bind:style="{
                 color: pressedPhoto?.liked_by_user ? 'red' : 'white',
@@ -72,9 +76,17 @@
           </div>
         </div>
         <div style="border-radius: 5px" class="modal-body">
-          <img
+          <!-- With unsplash API
+            
+            <img
             style="border-radius: 5px; margin: auto"
             :src="pressedPhoto?.urls?.small"
+          /> -->
+
+
+           <img
+            style="border-radius: 5px; margin: auto"
+            :src="pressedPhoto?.url"
           />
 
           <!-- <img
@@ -306,7 +318,12 @@
     <div class="cards-list">
       <div class="card 1" v-for="item of allPhotos">
         <div class="card_image" @click="openUp(item)">
-          <img :src="item.urls.small" />
+
+          <!-- with UNSPLASH API <img :src="item.urls.small" /> -->
+
+           <img :src="item.url" />
+
+          
         </div>
 
         <div class="card_title title-white" style="margin-top: -90px">
@@ -357,6 +374,7 @@ export default {
       Services: null,
       data: {},
       allPhotos: [],
+      
       photoParam: {},
       image: "",
       accesKey: "UZpMWkqqrQEP0g6t2Z2MWPcIV-jyHfuWPldICb8dBGQ",
@@ -410,7 +428,10 @@ export default {
       this.query = document.getElementById("categories").value;
       console.log(this.query);
       this.photoService
-        .getPhotos(this.page, this.per_page, this.query)
+      // with unsplash api
+      //  .getPhotos(this.page, this.per_page, this.query)
+        .getPhotos( this.query)
+
         .then((data) => {
           this.allPhotos = data;
           this.myLoader = false;
@@ -429,7 +450,10 @@ export default {
 
       if (this.username != "") {
         this.photoService
-          .getUsernamePhotos(this.username, this.per_page)
+        // with unsplash API
+          //.getUsernamePhotos(this.username, this.per_page)
+          .getUsernamePhotos(this.username)
+
           .then((data) => {
             if (data.length > 0) {
               this.allPhotos = data;
@@ -452,7 +476,11 @@ export default {
 
       this.filtredUsernameArray = [];
       for (var i = 0; i < this.allPhotos.length; i++) {
-        if (this.username == this.allPhotos[i].user.username) {
+        // With unsplash API 
+        // if (this.username == this.allPhotos[i].user.username) {
+          if (this.username == this.allPhotos[i].username){
+      this.errorSearch = false;
+
           this.filtredUsernameArray.push(this.allPhotos[i]);
         } else {
           this.errorSearch = true;
@@ -460,11 +488,14 @@ export default {
       }
 
       if (this.filtredUsernameArray.length !== 0 && this.username.length > 0) {
-        this.allPhotos = this.filtredUsernameArray;
         this.errorSearch = false;
+        this.allPhotos = this.filtredUsernameArray;
       } else if (this.filtredUsernameArray.length == 0 || this.username == "") {
         this.allPhotos = this.dataStored;
+      this.errorSearch = true;
+
       }
+
     },
   },
 
@@ -473,7 +504,9 @@ export default {
     console.log(this.query);
     this.myLoader = true;
     this.photoService
-      .getPhotos(this.page, this.per_page, this.query)
+    //with unsplash API
+     // .getPhotos(this.page, this.per_page, this.query)
+.getPhotos( this.query)
       .then((data) => {
         this.allPhotos = data;
         this.dataStored = data;
